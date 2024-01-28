@@ -6,14 +6,20 @@
     margin: 0 auto;
 }
 
-.word {
+.numbers {
     display: flex;
     margin: auto;
-    margin-top: 100px;
+    margin-top: 50px;
     justify-content: center;
     column-gap: 16px;
     row-gap: 78px;
     padding: 0;
     max-width: 1040px;
     flex-wrap: wrap;
+}
+
+.number {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }

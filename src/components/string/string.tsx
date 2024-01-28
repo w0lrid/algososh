@@ -6,6 +6,7 @@ import { Button } from '../ui/button/button';
 import styles from './string.module.css';
 import { DELAY_IN_MS } from '../../constants/delays';
 import { ElementStates } from '../../types/element-states';
+import { delay } from '../../utils';
 
 export const StringComponent: React.FC = () => {
   const [string, setString] = useState('');
@@ -56,7 +57,6 @@ export const StringComponent: React.FC = () => {
     arr[i] = arr[j];
     arr[j] = temp;
   };
-  const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
   const handleClick = () => {
     setCurrentIndex(0);
@@ -77,7 +77,7 @@ export const StringComponent: React.FC = () => {
         />
         <Button
           text="Развернуть"
-          linkedList={'small'}
+          linkedList="small"
           onClick={handleClick}
           isLoader={loader}
           disabled={!string}
@@ -86,15 +86,13 @@ export const StringComponent: React.FC = () => {
       </div>
       <div className={styles.word}>
         {reversedString &&
-          reversedString?.map((item, index) => {
-            return (
-              <Circle
-                letter={item}
-                state={getElementState(index, currentIndex, reversedString.length)}
-                key={index}
-              />
-            );
-          })}
+          reversedString.map((item, index) => (
+            <Circle
+              letter={item}
+              state={getElementState(index, currentIndex, reversedString.length)}
+              key={index}
+            />
+          ))}
       </div>
     </SolutionLayout>
   );
