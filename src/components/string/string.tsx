@@ -6,7 +6,7 @@ import { Button } from '../ui/button/button';
 import styles from './string.module.css';
 import { DELAY_IN_MS } from '../../constants/delays';
 import { ElementStates } from '../../types/element-states';
-import { delay } from '../../utils';
+import { delay, swap } from '../../utils';
 
 export const StringComponent: React.FC = () => {
   const [string, setString] = useState('');
@@ -51,11 +51,6 @@ export const StringComponent: React.FC = () => {
     }
 
     setLoader(false);
-  };
-  const swap = (arr: string[], i: number, j: number) => {
-    const temp = arr[i];
-    arr[i] = arr[j];
-    arr[j] = temp;
   };
 
   const handleClick = () => {
