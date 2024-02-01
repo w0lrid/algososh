@@ -68,7 +68,6 @@ export const StringComponent: React.FC = () => {
           onChange={handleChange}
           type="text"
           isLimitText={true}
-          data-cy="input"
         />
         <Button
           text="Развернуть"
@@ -76,7 +75,6 @@ export const StringComponent: React.FC = () => {
           onClick={handleClick}
           isLoader={loader}
           disabled={!string}
-          data-cy="submit"
         />
       </div>
       <div className={styles.word}>

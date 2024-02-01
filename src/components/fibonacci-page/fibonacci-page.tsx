@@ -55,7 +55,6 @@ export const FibonacciPage: React.FC = () => {
           onChange={handleChange}
           type="number"
           isLimitText={true}
-          data-cy="input"
         />
         <Button
           text="Рассчитать"
@@ -63,7 +62,6 @@ export const FibonacciPage: React.FC = () => {
           onClick={handleClick}
           isLoader={loader}
           disabled={!input || Number(input) < 1 || Number(input) > 19}
-          data-cy="submit"
         />
       </div>
       <div className={styles.numbers}>

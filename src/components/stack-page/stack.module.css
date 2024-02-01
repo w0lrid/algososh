@@ -1,0 +1,24 @@
+.controlsContainer {
+    display: flex;
+    column-gap: 60px;
+    max-width: 1040px;
+    margin: 0 auto;
+}
+
+.inputContainer {
+    display: flex;
+    column-gap: 12px;
+    flex-basis: 100%;
+}
+
+.stack {
+    display: flex;
+    margin: auto;
+    margin-top: 100px;
+    justify-content: center;
+    column-gap: 16px;
+    row-gap: 78px;
+    padding: 0;
+    max-width: 1040px;
+    flex-wrap: wrap;
+}
