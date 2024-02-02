@@ -17,7 +17,7 @@ export const StackPage: React.FC = () => {
     clear: false,
   });
   const [disabled, setDisables] = useState(false);
-  const [actionElementIndex, setActionElementIndex] = useState(-1);
+  const [activeElement, setActiveElement] = useState(-1);
   const stack = useRef<string[]>([]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -31,11 +31,11 @@ export const StackPage: React.FC = () => {
     stack.current.push(value);
     setArray([...stack.current]);
     setValue('');
-    setActionElementIndex(stack.current.length - 1);
+    setActiveElement(stack.current.length - 1);
 
     await delay(SHORT_DELAY_IN_MS);
 
-    setActionElementIndex(-1);
+    setActiveElement(-1);
     setLoader({ ...loader, add: false });
     setDisables(false);
   };
@@ -44,12 +44,12 @@ export const StackPage: React.FC = () => {
     setLoader({ ...loader, delete: true });
     setDisables(true);
 
-    setActionElementIndex(stack.current.length - 1);
+    setActiveElement(stack.current.length - 1);
     await delay(SHORT_DELAY_IN_MS);
 
     stack.current.pop();
     setArray([...stack.current]);
-    setActionElementIndex(-1);
+    setActiveElement(-1);
 
     setLoader({ ...loader, delete: false });
     setDisables(false);
@@ -78,7 +78,6 @@ export const StackPage: React.FC = () => {
             onChange={handleChange}
             type="text"
             isLimitText={true}
-            extraClass={styles.input}
           />
           <Button
             text="Добавить"
@@ -86,7 +85,6 @@ export const StackPage: React.FC = () => {
             onClick={handleClickPush}
             isLoader={loader.add}
             disabled={!value}
-            extraClass={styles.button}
           />
           <Button
             text="Удалить"
@@ -94,7 +92,6 @@ export const StackPage: React.FC = () => {
             onClick={handleClickPop}
             isLoader={loader.delete}
             disabled={disabled || array.length === 0}
-            extraClass={styles.button}
           />
         </div>
         <Button
@@ -104,7 +101,6 @@ export const StackPage: React.FC = () => {
           type="reset"
           isLoader={loader.clear}
           disabled={disabled || array.length === 0}
-          extraClass={styles.button}
         />
       </div>
       <div className={styles.stack}>
@@ -112,7 +108,7 @@ export const StackPage: React.FC = () => {
           array?.map((item, index) => (
             <Circle
               letter={item}
-              state={index === actionElementIndex ? ElementStates.Changing : ElementStates.Default}
+              state={index === activeElement ? ElementStates.Changing : ElementStates.Default}
               head={index === array?.length - 1 ? 'top' : undefined}
               index={index}
             />
