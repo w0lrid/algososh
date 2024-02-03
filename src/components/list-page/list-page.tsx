@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState } from 'react';
+import React, { ChangeEvent, useRef, useState } from 'react';
 import { SHORT_DELAY_IN_MS } from '../../constants/delays';
 import { ElementStates } from '../../types/element-states';
 import { delay, getRandomNumberFromInterval } from '../../utils';
@@ -8,6 +8,7 @@ import { ArrowIcon } from '../ui/icons/arrow-icon';
 import { Input } from '../ui/input/input';
 import { SolutionLayout } from '../ui/solution-layout/solution-layout';
 import styles from './list.module.css';
+import { LinkedList } from './utils';
 
 export enum Location {
   top = 'top',
@@ -19,25 +20,14 @@ type TElementStates = {
   changingIndex: number;
 };
 
-const getRandomArray = Array.from({ length: getRandomNumberFromInterval(3, 6) }, () =>
-  String(getRandomNumberFromInterval(0, 99))
-);
-
-const appendElement = (array: string[], element: string) => [...array, element];
-const prependElement = (array: string[], element: string) => [element, ...array];
-const deleteHeadElement = (array: string[]) => array.slice(1);
-const deleteTailElement = (array: string[]) => array.slice(0, -1);
-const addByIndexElement = (array: string[], element: string, index: number) => [
-  ...array.slice(0, index),
-  element,
-  ...array.slice(index),
-];
-const deleteByIndexElement = (array: string[], index: number) => [...array.slice(0, index), ...array.slice(index + 1)];
-
 export const ListPage: React.FC = () => {
+  const randomArray = Array.from({ length: getRandomNumberFromInterval(3, 6) }, () =>
+    String(getRandomNumberFromInterval(0, 99))
+  );
+  const list = useRef(new LinkedList(randomArray));
+  const [array, setArray] = useState(list.current.toArray());
   const [value, setValue] = useState('');
   const [inputIndex, setInputIndex] = useState('');
-  const [array, setArray] = useState(getRandomArray);
   const [smallCircleIndex, setSmallCircleIndex] = useState(-1);
   const [smallCircleLocation, setSmallCircleLocation] = useState<Location | undefined>(undefined);
   const [typeElementStates, setTypeElementStates] = useState<TElementStates>({
@@ -63,11 +53,6 @@ export const ListPage: React.FC = () => {
     setInputIndex(e.target.value);
   };
 
-  const updateListState = (updatedArr: string[], modifiedIndex: number, changingIndex: number) => {
-    setArray(updatedArr);
-    setTypeElementStates({ modifiedIndex, changingIndex });
-  };
-
   const addHead = async () => {
     setLoader({ ...loader, loaderAddHead: true });
     setCurrentElement(value);
@@ -75,8 +60,11 @@ export const ListPage: React.FC = () => {
     setSmallCircleIndex(0);
     await delay(SHORT_DELAY_IN_MS);
     setSmallCircleIndex(-1);
-    const updatedArr = prependElement(array, value);
-    updateListState(updatedArr, 0, -1);
+    list.current.prepend(value);
+    setTypeElementStates({ ...typeElementStates, modifiedIndex: 0 });
+    setArray(list.current.toArray());
+    await delay(SHORT_DELAY_IN_MS);
+    setTypeElementStates({ ...typeElementStates, modifiedIndex: -1 });
     setValue('');
     setLoader({ ...loader, loaderAddHead: false });
     setDisabled(false);
@@ -87,11 +75,14 @@ export const ListPage: React.FC = () => {
     setDisabled(true);
     setCurrentElement(value);
     setSmallCircleLocation(Location.top);
-    setSmallCircleIndex(array.length);
+    setSmallCircleIndex(list.current.getSize);
     await delay(SHORT_DELAY_IN_MS);
-    const updatedArr = appendElement(array, value);
-    updateListState(updatedArr, array.length, -1);
+    list.current.append(value);
+    setTypeElementStates({ ...typeElementStates, modifiedIndex: array.length });
     setSmallCircleIndex(-1);
+    setArray(list.current.toArray());
+    await delay(SHORT_DELAY_IN_MS);
+    setTypeElementStates({ ...typeElementStates, modifiedIndex: -1 });
     setValue('');
     setLoader({ ...loader, loaderAddTail: false });
     setDisabled(false);
@@ -103,10 +94,11 @@ export const ListPage: React.FC = () => {
     setCurrentElement(array[0]);
     setSmallCircleLocation(Location.bottom);
     setSmallCircleIndex(0);
+    array.splice(0, 1, '');
     await delay(SHORT_DELAY_IN_MS);
-    const updatedArr = deleteHeadElement(array);
-    updateListState(updatedArr, -1, -1);
+    list.current.deleteHead();
     setSmallCircleIndex(-1);
+    setArray(list.current.toArray());
     setLoader({ ...loader, loaderDeleteHead: false });
     setDisabled(false);
   };
@@ -117,69 +109,72 @@ export const ListPage: React.FC = () => {
     setCurrentElement(array[array.length - 1]);
     setSmallCircleLocation(Location.bottom);
     setSmallCircleIndex(array.length - 1);
+    setArray((array) => [...array.slice(0, array.length - 1), '']);
     await delay(SHORT_DELAY_IN_MS);
-    const updatedArr = deleteTailElement(array);
-    updateListState(updatedArr, -1, -1);
+    list.current.deleteTail();
     setSmallCircleIndex(-1);
+    setArray(list.current.toArray());
     setLoader({ ...loader, loaderDeleteTail: false });
     setDisabled(false);
   };
 
   const addIndex = async () => {
     setLoader({ ...loader, loaderAddIndex: true });
-    const index = Number(inputIndex);
-    if (index >= 0 && index <= array.length) {
-      let currentElementIndex = -1;
-      let updatedArr = array;
-      while (currentElementIndex <= index) {
-        setCurrentElement(value);
-        setSmallCircleLocation(Location.top);
-        setSmallCircleIndex(currentElementIndex - 1);
-        setTypeElementStates({ ...typeElementStates, changingIndex: currentElementIndex - 1 });
-        setCurrentElement(value);
-        setSmallCircleLocation(Location.top);
-        setSmallCircleIndex(currentElementIndex);
-        await delay(SHORT_DELAY_IN_MS);
-        currentElementIndex++;
-      }
-      updatedArr = addByIndexElement(updatedArr, value, index);
-      updateListState(updatedArr, index, -1);
+    let currentElementIndex = -1;
+    let index = Number(inputIndex);
+    while (currentElementIndex <= index) {
+      setCurrentElement(value);
+      setSmallCircleLocation(Location.top);
+      setSmallCircleIndex(currentElementIndex - 1);
+      setTypeElementStates({
+        ...typeElementStates,
+        changingIndex: currentElementIndex - 1,
+      });
+      setCurrentElement(value);
+      setSmallCircleLocation(Location.top);
+      setSmallCircleIndex(currentElementIndex);
       await delay(SHORT_DELAY_IN_MS);
-      setSmallCircleIndex(-1);
-      setValue('');
-      setInputIndex('');
-      setLoader({ ...loader, loaderAddIndex: false });
-      setDisabled(false);
-    } else {
-      console.error('Enter a valid index');
+      currentElementIndex++;
     }
+    list.current.addByIndex(value, index);
+    setSmallCircleIndex(-1);
+    setTypeElementStates({ ...typeElementStates, modifiedIndex: index });
+    setArray(list.current.toArray());
+    await delay(SHORT_DELAY_IN_MS);
+    setTypeElementStates({ ...typeElementStates, modifiedIndex: -1 });
+    setArray(list.current.toArray());
+    setValue('');
+    setInputIndex('');
+    setLoader({ ...loader, loaderAddIndex: false });
+    setDisabled(false);
   };
 
   const deleteIndex = async () => {
     setLoader({ ...loader, loaderDeleteIndex: true });
-    const index = Number(inputIndex);
-    if (index >= 0 && index < array.length) {
-      let currentElementIndex = 0;
-      let updatedArr = array;
-      while (currentElementIndex <= index) {
-        setTypeElementStates({ ...typeElementStates, changingIndex: currentElementIndex });
-        await delay(SHORT_DELAY_IN_MS);
-        currentElementIndex++;
-      }
-      setCurrentElement(array[index]);
-      setSmallCircleLocation(Location.bottom);
-      setSmallCircleIndex(index);
-      updatedArr = deleteByIndexElement(updatedArr, index);
-      updateListState(updatedArr, -1, -1);
+    let index = Number(inputIndex);
+    let currentElementIndex = 0;
+    while (currentElementIndex <= index) {
+      setTypeElementStates({
+        ...typeElementStates,
+        changingIndex: currentElementIndex,
+      });
       await delay(SHORT_DELAY_IN_MS);
-      setSmallCircleIndex(-1);
-      setInputIndex('');
-      setLoader({ ...loader, loaderDeleteIndex: false });
-      setDisabled(false);
-    } else {
-      console.error('Enter a valid index');
+      currentElementIndex++;
     }
+    setCurrentElement(array[index]);
+    setSmallCircleLocation(Location.bottom);
+    setSmallCircleIndex(index);
+    setArray((array) => [...array.slice(0, index), '', ...array.slice(index + 1)]);
+    await delay(SHORT_DELAY_IN_MS);
+    setTypeElementStates({ ...typeElementStates, changingIndex: -1 });
+    setSmallCircleIndex(-1);
+    list.current.deleteByIndex(index);
+    setArray(list.current.toArray());
+    setInputIndex('');
+    setLoader({ ...loader, loaderDeleteIndex: false });
+    setDisabled(false);
   };
+
   const getHead = (index: number) =>
     smallCircleIndex === index && smallCircleLocation === Location.top ? (
       <Circle

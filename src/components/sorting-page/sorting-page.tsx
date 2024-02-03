@@ -6,26 +6,11 @@ import { Direction } from '../../types/direction';
 import { RadioInput } from '../ui/radio-input/radio-input';
 import { Button } from '../ui/button/button';
 import { Column } from '../ui/column/column';
-import { ElementStates } from '../../types/element-states';
-import { getRandomNumberFromInterval } from '../../utils';
-
-const MIN_LENGTH = 3;
-const MAX_LENGTH = 17;
-
-const generateRandomArray = (): any[] => {
-  const array: any[] = [];
-  const length = getRandomNumberFromInterval(MIN_LENGTH, MAX_LENGTH);
-
-  for (let i = 0; i < length; i++) {
-    array.push({ state: getRandomNumberFromInterval(0, 100), color: ElementStates.Default });
-  }
-
-  return array;
-};
+import { generateRandomArray, TArraySorting } from './utils';
 
 export const SortingPage: React.FC = () => {
   const [loader, setLoader] = useState(false);
-  const [array, setArray] = useState<any[]>(generateRandomArray());
+  const [array, setArray] = useState<TArraySorting[]>(generateRandomArray());
   const [sortingType, setSortingType] = useState('choice');
   const [direction, setDirection] = useState<Direction>();
 

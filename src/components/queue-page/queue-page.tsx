@@ -7,11 +7,14 @@ import { Circle } from '../ui/circle/circle';
 import { Input } from '../ui/input/input';
 import { SolutionLayout } from '../ui/solution-layout/solution-layout';
 import styles from './queue.module.css';
+import { Queue } from './utils';
 
-const queue_length = 7;
+const QUEUE_LENGTH = 7;
+
 export const QueuePage: React.FC = () => {
+  const queue = useRef(new Queue(QUEUE_LENGTH));
   const [value, setValue] = useState('');
-  const [array, setArray] = useState(new Array(queue_length).fill(null));
+  const [array, setArray] = useState(new Array(QUEUE_LENGTH).fill(null));
   const [disabled, setDisabled] = useState(false);
   const [activeElement, setActiveElement] = useState(-1);
   const [loader, setLoader] = useState({
@@ -20,11 +23,6 @@ export const QueuePage: React.FC = () => {
     clear: false,
   });
 
-  const container = useRef(Array(queue_length).fill(null));
-  const head = useRef(0);
-  const tail = useRef(0);
-  const length = useRef(0);
-
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setValue(e.currentTarget.value);
     setDisabled(true);
@@ -32,16 +30,9 @@ export const QueuePage: React.FC = () => {
 
   const enqueue = async () => {
     setLoader({ ...loader, add: true });
-    setActiveElement(tail.current);
-
-    if (!isEmpty()) {
-      tail.current = (tail.current + 1) % queue_length;
-    }
-
-    container.current[tail.current] = value;
-    length.current++;
-
-    setArray([...container.current]);
+    setActiveElement(queue.current.getTail);
+    queue.current.enqueue(value);
+    setArray(queue.current.toArray());
     await delay(SHORT_DELAY_IN_MS);
     setValue('');
     setActiveElement(-1);
@@ -52,19 +43,9 @@ export const QueuePage: React.FC = () => {
   const dequeue = async () => {
     setLoader({ ...loader, delete: true });
     setDisabled(true);
-    setActiveElement(head.current);
+    setActiveElement(queue.current.getHead);
     await delay(SHORT_DELAY_IN_MS);
-
-    if (!isEmpty()) {
-      container.current[head.current] = null;
-      length.current--;
-
-      if (head.current !== tail.current) {
-        head.current = (head.current + 1) % queue_length;
-      }
-    }
-
-    setArray([...container.current]);
+    queue.current.dequeue();
     setActiveElement(-1);
     setLoader({ ...loader, delete: false });
     setDisabled(false);
@@ -74,16 +55,11 @@ export const QueuePage: React.FC = () => {
     setLoader({ ...loader, clear: true });
     setDisabled(true);
     await delay(SHORT_DELAY_IN_MS);
-    head.current = 0;
-    tail.current = 0;
-    length.current = 0;
-    container.current = Array(queue_length).fill(null);
-    setArray([...container.current]);
+    queue.current.clear();
+    setArray(new Array(QUEUE_LENGTH).fill(null));
     setDisabled(false);
     setLoader({ ...loader, clear: false });
   };
-
-  const isEmpty = () => length.current === 0;
 
   return (
     <SolutionLayout title="Очередь">
@@ -103,7 +79,7 @@ export const QueuePage: React.FC = () => {
               enqueue();
             }}
             isLoader={loader.add}
-            disabled={!value || length.current >= queue_length}
+            disabled={!value || queue.current.isFull()}
           />
           <Button
             text="Удалить"
@@ -112,7 +88,7 @@ export const QueuePage: React.FC = () => {
               dequeue();
             }}
             isLoader={loader.delete}
-            disabled={disabled || isEmpty()}
+            disabled={disabled || queue.current.isEmpty()}
           />
         </div>
         <Button
@@ -123,7 +99,7 @@ export const QueuePage: React.FC = () => {
           }}
           type="reset"
           isLoader={loader.clear}
-          disabled={disabled || tail.current === 0}
+          disabled={disabled || queue.current.getTail() === 0}
         />
       </div>
       <div className={styles.queue}>
@@ -133,11 +109,12 @@ export const QueuePage: React.FC = () => {
               letter={item ?? ''}
               state={index === activeElement ? ElementStates.Changing : ElementStates.Default}
               head={
-                (index === head.current && !isEmpty()) || (index === head.current && head.current === tail.current - 1)
+                (index === queue.current.getHead() && !queue.current.isEmpty()) ||
+                (index === queue.current.getHead() && queue.current.getHead() === queue.current.getSize() - 1)
                   ? 'head'
                   : ''
               }
-              tail={index === tail.current && !isEmpty() ? 'tail' : ''}
+              tail={index === queue.current.getTail() && !queue.current.isEmpty() ? 'tail' : ''}
               index={index}
             />
           ))}

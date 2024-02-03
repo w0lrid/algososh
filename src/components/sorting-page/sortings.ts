@@ -2,11 +2,12 @@ import { delay, swap } from '../../utils';
 import { DELAY_IN_MS } from '../../constants/delays';
 import { Direction } from '../../types/direction';
 import { ElementStates } from '../../types/element-states';
+import { TArraySorting } from './utils';
 
 export const choice = async (
-  array: any[],
+  array: TArraySorting[],
   direction: Direction,
-  setArray: (array: any[]) => void,
+  setArray: (array: TArraySorting[]) => void,
   deactivateLoader: () => void
 ) => {
   for (let i = 0; i < array.length; i++) {
@@ -46,9 +47,9 @@ export const choice = async (
   deactivateLoader();
 };
 export const bubble = async (
-  array: any[],
+  array: TArraySorting[],
   direction: Direction,
-  setArray: (array: any[]) => void,
+  setArray: (array: TArraySorting[]) => void,
   deactivateLoader: () => void
 ) => {
   for (let i = 0; i < array.length; i++) {

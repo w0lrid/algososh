@@ -6,6 +6,7 @@ import { SHORT_DELAY_IN_MS } from '../../constants/delays';
 import { Input } from '../ui/input/input';
 import { Button } from '../ui/button/button';
 import { Circle } from '../ui/circle/circle';
+import { generateFibonacciSequence } from './utils';
 
 const MIN_LENGTH = 1;
 const MAX_LENGTH = 19;
@@ -15,15 +16,6 @@ export const FibonacciPage: React.FC = () => {
   const [input, setInput] = useState('');
   const [fibonacciSequence, setFibonacciSequence] = useState<number[]>([]);
 
-  const generateFibonacciSequence = (n: number): number[] => {
-    const fibonacciArray: number[] = [1, 1];
-
-    for (let i = 2; i <= n; i++) {
-      fibonacciArray[i] = fibonacciArray[i - 1] + fibonacciArray[i - 2];
-    }
-
-    return fibonacciArray;
-  };
   const showFibonacciSequence = async (inputValue: string) => {
     setLoader(true);
     await delay(SHORT_DELAY_IN_MS);

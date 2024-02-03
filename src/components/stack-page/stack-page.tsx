@@ -7,6 +7,7 @@ import { delay } from '../../utils';
 import { SHORT_DELAY_IN_MS } from '../../constants/delays';
 import { Circle } from '../ui/circle/circle';
 import { ElementStates } from '../../types/element-states';
+import { Stack } from './utils';
 
 export const StackPage: React.FC = () => {
   const [value, setValue] = useState('');
@@ -18,7 +19,7 @@ export const StackPage: React.FC = () => {
   });
   const [disabled, setDisables] = useState(false);
   const [activeElement, setActiveElement] = useState(-1);
-  const stack = useRef<string[]>([]);
+  const stack = useRef<Stack<string>>(new Stack());
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setValue(e.target.value);
@@ -27,14 +28,11 @@ export const StackPage: React.FC = () => {
   const handleClickPush = async () => {
     setLoader({ ...loader, add: true });
     setDisables(true);
-
     stack.current.push(value);
-    setArray([...stack.current]);
+    setArray(stack.current.toArray);
     setValue('');
-    setActiveElement(stack.current.length - 1);
-
+    setActiveElement(stack.current.size - 1);
     await delay(SHORT_DELAY_IN_MS);
-
     setActiveElement(-1);
     setLoader({ ...loader, add: false });
     setDisables(false);
@@ -43,14 +41,11 @@ export const StackPage: React.FC = () => {
   const handleClickPop = async () => {
     setLoader({ ...loader, delete: true });
     setDisables(true);
-
-    setActiveElement(stack.current.length - 1);
+    setActiveElement(stack.current.size - 1);
     await delay(SHORT_DELAY_IN_MS);
-
     stack.current.pop();
-    setArray([...stack.current]);
+    setArray(stack.current.toArray);
     setActiveElement(-1);
-
     setLoader({ ...loader, delete: false });
     setDisables(false);
   };
@@ -58,12 +53,9 @@ export const StackPage: React.FC = () => {
   const handleClickClear = async () => {
     setLoader({ ...loader, clear: true });
     setDisables(true);
-
     await delay(SHORT_DELAY_IN_MS);
-
-    stack.current = [];
+    stack.current.clear();
     setArray([]);
-
     setDisables(false);
     setLoader({ ...loader, clear: false });
   };

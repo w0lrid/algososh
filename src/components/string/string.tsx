@@ -5,8 +5,8 @@ import { Circle } from '../ui/circle/circle';
 import { Button } from '../ui/button/button';
 import styles from './string.module.css';
 import { DELAY_IN_MS } from '../../constants/delays';
-import { ElementStates } from '../../types/element-states';
 import { delay, swap } from '../../utils';
+import { getElementState, getReversedString } from './utils';
 
 export const StringComponent: React.FC = () => {
   const [string, setString] = useState('');
@@ -14,32 +14,14 @@ export const StringComponent: React.FC = () => {
   const [loader, setLoader] = useState(false);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
 
-  const getElementState = (index: number, currentIndex: number, length: number) => {
-    if (
-      currentIndex > index ||
-      currentIndex > length - index - 1 ||
-      length === 1 ||
-      currentIndex === Math.floor(length / 2)
-    ) {
-      return ElementStates.Modified;
-    }
-
-    if (currentIndex === index || currentIndex === length - index - 1) {
-      return ElementStates.Changing;
-    }
-
-    return ElementStates.Default;
-  };
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setString(e.target.value);
   };
   const reverse = async (string: string) => {
-    const middleOfWord = Math.ceil(string.length / 2);
-    const wordAsArray = string.split('');
-    const reversedArray: string[] = [...wordAsArray];
+    const reversedArray = getReversedString(string);
     setReversedString(reversedArray);
 
-    for (let i = 0; i < middleOfWord; i++) {
+    for (let i = 0; i < Math.ceil(string.length / 2); i++) {
       const j = string.length - 1 - i;
 
       if (i < j) {
