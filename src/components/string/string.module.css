@@ -1,0 +1,19 @@
+.inputContainer {
+    display: grid;
+    column-gap: 12px;
+    grid-template-columns: 1fr 178px;
+    max-width: 568px;
+    margin: 0 auto;
+}
+
+.word {
+    display: flex;
+    margin: auto;
+    margin-top: 100px;
+    justify-content: center;
+    column-gap: 16px;
+    row-gap: 78px;
+    padding: 0;
+    max-width: 1040px;
+    flex-wrap: wrap;
+}

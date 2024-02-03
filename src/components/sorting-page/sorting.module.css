@@ -1,0 +1,35 @@
+.controlsContainer {
+    display: flex;
+    max-width: 980px;
+    margin: 0 auto;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.sortingContainer {
+    display: flex;
+    column-gap: 40px;
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+
+.directionsContainer {
+    display: flex;
+    padding: 0;
+    border: none;
+    column-gap: 12px;
+}
+
+.columns {
+    display: flex;
+    margin: auto;
+    margin-top: 50px;
+    justify-content: center;
+    align-items: flex-end;
+    column-gap: 10px;
+    max-width: 1040px;
+    height: 100%;
+    max-height: 350px;
+    flex-wrap: wrap;
+}
