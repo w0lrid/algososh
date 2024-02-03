@@ -7,13 +7,11 @@ import { RadioInput } from '../ui/radio-input/radio-input';
 import { Button } from '../ui/button/button';
 import { Column } from '../ui/column/column';
 import { ElementStates } from '../../types/element-states';
+import { getRandomNumberFromInterval } from '../../utils';
 
 const MIN_LENGTH = 3;
 const MAX_LENGTH = 17;
 
-const getRandomNumberFromInterval = (min: number, max: number): number => {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-};
 const generateRandomArray = (): any[] => {
   const array: any[] = [];
   const length = getRandomNumberFromInterval(MIN_LENGTH, MAX_LENGTH);
