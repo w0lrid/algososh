@@ -6,7 +6,7 @@ import { Button } from '../ui/button/button';
 import styles from './string.module.css';
 import { DELAY_IN_MS } from '../../constants/delays';
 import { delay, swap } from '../../utils';
-import { getElementState, getReversedString } from './utils';
+import { getElementState, getSplitString } from './utils';
 
 export const StringComponent: React.FC = () => {
   const [string, setString] = useState('');
@@ -18,7 +18,7 @@ export const StringComponent: React.FC = () => {
     setString(e.target.value);
   };
   const reverse = async (string: string) => {
-    const reversedArray = getReversedString(string);
+    const reversedArray = getSplitString(string);
     setReversedString(reversedArray);
 
     for (let i = 0; i < Math.ceil(string.length / 2); i++) {
