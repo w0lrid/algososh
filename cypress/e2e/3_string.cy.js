@@ -14,7 +14,7 @@ describe('Algososh string', () => {
   it('reverses string properly', function () {
     cy.get('input').type(TEST_STRING);
     cy.get('button').contains('Развернуть').click();
-    cy.get(CIRCLE).as('circles').should('have.length', 5);
+    cy.get(CIRCLE).as('circles').should('have.length', `${TEST_STRING.length}`);
     cy.get('@circles').each((el, index) => {
       cy.wrap((el) => expect(el).contains(index + 1));
 
