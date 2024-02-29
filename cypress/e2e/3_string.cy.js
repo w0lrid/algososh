@@ -11,7 +11,7 @@ describe('Algososh string', () => {
     cy.contains('button', 'Развернуть').should('be.disabled');
   });
 
-  it('reverses string properly', function () {
+  it('reverses string properly', () => {
     cy.get('input').type(TEST_STRING);
     cy.get('button').contains('Развернуть').click();
     cy.get(CIRCLE).as('circles').should('have.length', `${TEST_STRING.length}`);

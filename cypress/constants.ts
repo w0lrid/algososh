@@ -5,3 +5,6 @@ export const CIRCLE = '[class*=circle_circle]';
 export const CIRCLE_DEFAULT = '[class*=circle_default]';
 export const CIRCLE_CHANGING = '[class*=circle_changing]';
 export const CIRCLE_CHANGED = '[class*=circle_modified]';
+export const STACK = '[class*=stack_stack]';
+export const COLOR_DEFAULT = 'rgb(0, 50, 255)';
+export const COLOR_MODIFIED = 'rgb(210, 82, 225)';
