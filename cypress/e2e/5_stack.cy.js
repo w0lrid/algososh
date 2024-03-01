@@ -1,5 +1,5 @@
 import { DELAY_IN_MS, SHORT_DELAY_IN_MS } from '../../src/constants/delays';
-import { CIRCLE, COLOR_DEFAULT, COLOR_MODIFIED, STACK } from '../constants';
+import { CIRCLE, COLOR_DEFAULT, COLOR_CHANGING, STACK } from '../constants';
 
 describe('Algososh stack', function () {
   function addSeveralElements() {
@@ -23,7 +23,7 @@ describe('Algososh stack', function () {
   it('inserts element properly', function () {
     cy.get('input').type('1');
     cy.get('button').contains('Добавить').click();
-    cy.get(CIRCLE).last().should('have.css', 'border-color', COLOR_MODIFIED).contains(1);
+    cy.get(CIRCLE).last().should('have.css', 'border-color', COLOR_CHANGING).contains(1);
     cy.wait(SHORT_DELAY_IN_MS);
     cy.get(CIRCLE).last().should('have.css', 'border-color', COLOR_DEFAULT).contains(1);
   });

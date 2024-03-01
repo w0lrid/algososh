@@ -1,7 +1,7 @@
 import { SHORT_DELAY_IN_MS } from '../../src/constants/delays';
-import { CIRCLE, QUEUE, COLOR_MODIFIED, COLOR_DEFAULT } from '../constants';
+import { CIRCLE, QUEUE, COLOR_CHANGING, COLOR_DEFAULT } from '../constants';
 
-describe('Страница очередь работает корректно', function () {
+describe('Algososh queue', function () {
   function addSeveralElements() {
     for (let i = 1; i < 4; i++) {
       cy.get('input').type(i);
@@ -31,7 +31,7 @@ describe('Страница очередь работает корректно', 
           .then(() => {
             cy.wait(SHORT_DELAY_IN_MS);
             expect($circles[i - 1]).to.contain(i);
-            expect($circles[i - 1]).to.have.css('border-color', COLOR_MODIFIED);
+            expect($circles[i - 1]).to.have.css('border-color', COLOR_CHANGING);
           });
         expect($circles[i - 1]).to.have.css('border-color', COLOR_DEFAULT);
       });
@@ -49,7 +49,7 @@ describe('Страница очередь работает корректно', 
     cy.get(QUEUE).find(CIRCLE).as('circles');
     cy.get('button').contains('Удалить').click();
     cy.get('@circles').then(($circles) => {
-      expect($circles[0]).to.have.css('border-color', COLOR_MODIFIED);
+      expect($circles[0]).to.have.css('border-color', COLOR_CHANGING);
       expect($circles[0]).to.contain('');
     });
 

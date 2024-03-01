@@ -7,5 +7,7 @@ export const CIRCLE_CHANGING = '[class*=circle_changing]';
 export const CIRCLE_CHANGED = '[class*=circle_modified]';
 export const STACK = '[class*=stack_stack]';
 export const QUEUE = '[class*=queue_queue]';
+export const LIST = '[class*=list_list]';
 export const COLOR_DEFAULT = 'rgb(0, 50, 255)';
-export const COLOR_MODIFIED = 'rgb(210, 82, 225)';
+export const COLOR_CHANGING = 'rgb(210, 82, 225)';
+export const COLOR_MODIFIED = 'rgb(127, 224, 81)';
