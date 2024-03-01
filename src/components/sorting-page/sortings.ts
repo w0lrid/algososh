@@ -10,6 +10,11 @@ export const choice = async (
   setArray: (array: TArraySorting[]) => void,
   deactivateLoader: () => void
 ) => {
+  if (array.length === 1) {
+    deactivateLoader();
+    return;
+  }
+
   for (let i = 0; i < array.length; i++) {
     let index = i;
     for (let j = i + 1; j < array.length; j++) {
@@ -52,6 +57,11 @@ export const bubble = async (
   setArray: (array: TArraySorting[]) => void,
   deactivateLoader: () => void
 ) => {
+  if (array.length === 1) {
+    deactivateLoader();
+    return;
+  }
+
   for (let i = 0; i < array.length; i++) {
     for (let j = 0; j < array.length - i - 1; j++) {
       array[j].color = ElementStates.Changing;
@@ -81,6 +91,5 @@ export const bubble = async (
     setArray([...array]);
   }
 
-  setArray([...array]);
   deactivateLoader();
 };
